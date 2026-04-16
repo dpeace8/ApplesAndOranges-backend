@@ -21,13 +21,12 @@ app.add_middleware(
 MODEL_PATH = "fruit_model.keras"
 
 if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError(f"{MODEL_PATH} was not found. Put it in the same folder as app.py")
+    raise FileNotFoundError(f"{MODEL_PATH} was not found. Put it in the same folder as main.py")
 
 model = tf.keras.models.load_model(MODEL_PATH)
 
 IMG_HEIGHT = 180
 IMG_WIDTH = 180
-
 
 def preprocess_image(image_bytes):
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
@@ -36,18 +35,13 @@ def preprocess_image(image_bytes):
     img_array = np.expand_dims(img_array, axis=0)
     return img_array
 
-
 @app.get("/")
 def home():
-    return {
-        "message": "Fruit classifier API is running"
-    }
-
+    return {"message": "Fruit classifier API is running"}
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     image_bytes = await file.read()
-
     img_array = preprocess_image(image_bytes)
     prediction = model.predict(img_array, verbose=0)
     raw_value = float(prediction[0][0])
@@ -73,8 +67,7 @@ async def predict(file: UploadFile = File(...)):
         "image_mime_type": file.content_type
     }
 
-
 port = int(os.environ.get("PORT", 8080))
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=port)
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
