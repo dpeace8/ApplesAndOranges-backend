@@ -1,6 +1,6 @@
 functions-framework==3.*
 fastapi
 uvicorn
-tensorflow
+tensorflow==2.16.2
 pillow
 python-multipart
